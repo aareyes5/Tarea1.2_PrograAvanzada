@@ -1,0 +1,44 @@
+{
+  "Sports": [
+    {
+      "name": "Running Shoes",
+      "price": 50,
+      "description": "Comfortable running shoes",
+      "image": "running_shoes.jpg"
+    },
+    {
+      "name": "Sneakers",
+      "price": 40,
+      "description": "Trendy sneakers for casual wear",
+      "image": "sneakers.png"
+    }
+  ],
+  "Formal": [
+    {
+      "name": "Leather Shoes",
+      "price": 80,
+      "description": "Elegant leather shoes for formal occasions",
+      "image": "leather_shoes.png"
+    },
+    {
+      "name": "Loafers",
+      "price": 60,
+      "description": "Comfortable and stylish loafers",
+      "image": "loafers.png"
+    }
+  ],
+  "Casual": [
+    {
+      "name": "Sandals",
+      "price": 30,
+      "description": "Casual sandals for everyday use",
+      "image": "sandals.png"
+    },
+    {
+      "name": "Flip Flops",
+      "price": 20,
+      "description": "Lightweight flip-flops for the beach",
+      "image": "flip_flops.png"
+    }
+  ]
+}
