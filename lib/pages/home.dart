@@ -94,7 +94,7 @@ class _HomePageState extends State<Home> {
                         ),
                         trailing: ElevatedButton(
                           onPressed: () {
-                            _carrito.addToCart(product.name);
+                            _carrito.addToCart(product);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
                                 content: Text('${product.name} agregado al carrito'),
