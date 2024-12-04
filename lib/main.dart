@@ -2,9 +2,9 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 
-import 'pages/login.dart';
+import 'pages/kilos.dart';
 import 'pages/home.dart';
-import 'pages/factura.dart';
+
 
 
 void main() {
@@ -20,9 +20,8 @@ class MyApp extends StatelessWidget {
       title: 'Compra de Zapatos',
       initialRoute: '/',
       routes: {
-        '/': (context) => Login(),
-        '/home': (context) => Home(),
-        '/factura': (context) => Factura(),
+        '/': (context) => Home(),
+        '/kilos': (context) => Kilos(),
       },
     );
   }
