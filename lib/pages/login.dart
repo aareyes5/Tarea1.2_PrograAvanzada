@@ -1,6 +1,36 @@
 import 'package:flutter/material.dart';
+import '../logica/logica_login.dart';
 
-class Login extends StatelessWidget {
+class Login extends StatefulWidget {
+  @override
+  _LoginState createState() => _LoginState();
+}
+
+class _LoginState extends State<Login> {
+  final AutenticacionLogin _auth = AutenticacionLogin();
+  final TextEditingController _usernameController = TextEditingController();
+  final TextEditingController _passwordController = TextEditingController();
+  String _errorMessage = '';
+
+  @override
+  void initState() {
+    super.initState();
+    _auth.cargarUsuarios();
+  }
+
+  void _login() {
+    final username = _usernameController.text;
+    final password = _passwordController.text;
+
+    if (_auth.login(username, password)) {
+      Navigator.pushNamed(context, '/home');
+    } else {
+      setState(() {
+        _errorMessage = 'Usuario o contraseña incorrectos';
+      });
+    }
+  }
+
   @override
   Widget build(BuildContext context) {
     return Scaffold(
@@ -42,6 +72,7 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  controller: _usernameController,
                   decoration: InputDecoration(
                     labelText: 'Usuario',
                     border: OutlineInputBorder(),
@@ -49,6 +80,7 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 TextField(
+                  controller: _passwordController,
                   obscureText: true,
                   decoration: InputDecoration(
                     labelText: 'Contraseña',
@@ -57,9 +89,7 @@ class Login extends StatelessWidget {
                 ),
                 SizedBox(height: 20),
                 ElevatedButton.icon(
-                  onPressed: () {
-                    Navigator.pushNamed(context, '/home');
-                  },
+                  onPressed: _login,
                   icon: Icon(Icons.login),
                   label: Text('Iniciar Sesión'),
                   style: ElevatedButton.styleFrom(
@@ -70,6 +100,14 @@ class Login extends StatelessWidget {
                     ),
                   ),
                 ),
+                if (_errorMessage.isNotEmpty)
+                  Padding(
+                    padding: const EdgeInsets.only(top: 20),
+                    child: Text(
+                      _errorMessage,
+                      style: TextStyle(color: Colors.red),
+                    ),
+                  ),
               ],
             ),
           ),
