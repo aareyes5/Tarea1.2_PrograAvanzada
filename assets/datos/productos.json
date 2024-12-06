@@ -1,44 +1,56 @@
 {
-  "Sports": [
+  "Deportes": [
     {
-      "name": "Running Shoes",
+      "name": "Zapatos para Correr",
       "price": 50,
-      "description": "Comfortable running shoes",
-      "image": "running_shoes.jpg"
+      "description": "Zapatos cómodos para correr",
+      "image": "running_shoes.jpg",
+      "isOnSale": true,
+      "isPopular": true
     },
     {
-      "name": "Sneakers",
+      "name": "Zapatillas Deportivas",
       "price": 40,
-      "description": "Trendy sneakers for casual wear",
-      "image": "sneakers.png"
+      "description": "Zapatillas modernas para uso casual",
+      "image": "sneakers.jpg",
+      "isOnSale": false,
+      "isPopular": true
     }
   ],
   "Formal": [
     {
-      "name": "Leather Shoes",
+      "name": "Zapatos de Cuero",
       "price": 80,
-      "description": "Elegant leather shoes for formal occasions",
-      "image": "leather_shoes.png"
+      "description": "Zapatos elegantes de cuero para ocasiones formales",
+      "image": "leather_shoes.jpg",
+      "isOnSale": false,
+      "isPopular": true
     },
     {
-      "name": "Loafers",
+      "name": "Mocasines",
       "price": 60,
-      "description": "Comfortable and stylish loafers",
-      "image": "loafers.png"
+      "description": "Mocasines cómodos y con estilo",
+      "image": "loafers.jpg",
+      "isOnSale": true,
+      "isPopular": false
     }
   ],
   "Casual": [
     {
-      "name": "Sandals",
+      "name": "Sandalias",
       "price": 30,
-      "description": "Casual sandals for everyday use",
-      "image": "sandals.png"
+      "description": "Sandalias casuales para el uso diario",
+      "image": "sandals.jpg",
+      "isOnSale": false,
+      "isPopular": true
     },
     {
-      "name": "Flip Flops",
+      "name": "Chanclas",
       "price": 20,
-      "description": "Lightweight flip-flops for the beach",
-      "image": "flip_flops.png"
+      "description": "Chanclas ligeras para la playa",
+      "image": "flip_flops.jpg",
+      "isOnSale": true,
+      "isPopular": false
     }
   ]
 }
