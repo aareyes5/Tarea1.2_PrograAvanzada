@@ -3,9 +3,9 @@ import 'package:flutter/material.dart';
 import 'package:flutter/cupertino.dart';
 import 'package:path_provider/path_provider.dart';
 
-import 'pages/kilos.dart';
+import 'pages/login.dart';
 import 'pages/home.dart';
-
+import 'pages/factura.dart';
 
 
 void main() async {
@@ -22,8 +22,9 @@ class MyApp extends StatelessWidget {
       title: 'Compra de Zapatos',
       initialRoute: '/',
       routes: {
-        '/': (context) => Home(),
-        '/kilos': (context) => Kilos(),
+        '/': (context) => Login(),
+        '/home': (context) => Home(),
+        '/factura': (context) => Factura(),
       },
     );
   }
