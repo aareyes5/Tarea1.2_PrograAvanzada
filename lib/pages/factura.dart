@@ -1,7 +1,6 @@
 import 'package:flutter/material.dart';
 import '../logica/logica_classes.dart';
 import 'package:pdf/widgets.dart' as pw;
-import 'package:pdf/pdf.dart' as pw;
 import 'package:open_file/open_file.dart';
 
 class Factura extends StatelessWidget {
@@ -21,27 +20,74 @@ class Factura extends StatelessWidget {
     final double total = items.fold(0, (sum, item) => sum + item.price);
 
     return Scaffold(
-      appBar: AppBar(title: Text('Factura')),
-      body: Padding(
-        padding: const EdgeInsets.all(16.0),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
-          children: [
-            Text('Artículos en el carrito:', style: TextStyle(fontSize: 18)),
-            SizedBox(height: 10),
-            ...items.map((item) => Text('${item.name}: \$${item.price}')),
-            Divider(),
-            Text('Valor Total: \$${total.toStringAsFixed(2)}',
-                style: TextStyle(fontSize: 18, fontWeight: FontWeight.bold)),
-            SizedBox(height: 20),
-            ElevatedButton(
-              onPressed: _generatePdf,
-              child: Text('Guardar factura como PDF'),
-            ),
-          ],
+      appBar: AppBar(
+        title: Text('Factura'),
+        backgroundColor: Color(0xFFE63946),
+      ),
+      body: Center(
+        child: Container(
+          padding: EdgeInsets.all(20),
+          margin: EdgeInsets.all(16),
+          decoration: BoxDecoration(
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(12),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.grey.withOpacity(0.3),
+                blurRadius: 10,
+                spreadRadius: 5,
+                offset: Offset(0, 3),
+              ),
+            ],
+          ),
+          child: Column(
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              Text(
+                'Artículos en el carrito:',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.black,
+                ),
+              ),
+              Divider(color: Colors.grey),
+              SizedBox(height: 10),
+              ...items.map(
+                    (item) => Padding(
+                  padding: EdgeInsets.symmetric(vertical: 5),
+                  child: Text(
+                    '${item.name}: \$${item.price.toStringAsFixed(2)}',
+                    style: TextStyle(fontSize: 16),
+                  ),
+                ),
+              ),
+              Divider(),
+              Text(
+                'Valor Total: \$${total.toStringAsFixed(2)}',
+                style: TextStyle(
+                  fontSize: 20,
+                  fontWeight: FontWeight.bold,
+                  color: Colors.green,
+                ),
+              ),
+              SizedBox(height: 20),
+              ElevatedButton.icon(
+                onPressed: _generatePdf,
+                icon: Icon(Icons.picture_as_pdf),
+                label: Text('Guardar factura como PDF'),
+                style: ElevatedButton.styleFrom(
+                  backgroundColor: Color(0xFFF4D03F),
+                  foregroundColor: Colors.black,
+                  shape: RoundedRectangleBorder(
+                    borderRadius: BorderRadius.circular(10),
+                  ),
+                ),
+              ),
+            ],
+          ),
         ),
       ),
     );
   }
 }
-

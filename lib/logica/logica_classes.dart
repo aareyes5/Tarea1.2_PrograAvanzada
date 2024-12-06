@@ -1,4 +1,4 @@
-//Archivo donde se acumularan las clases que se usara la logica en varios haspectos de la aplicacion
+// Archivo donde se acumularán las clases que se usarán en varios aspectos de la aplicación
 import 'dart:io';
 import 'package:path_provider/path_provider.dart';
 import 'package:pdf/pdf.dart' as pw;
@@ -7,7 +7,7 @@ import 'dart:convert';
 import 'package:flutter/services.dart';
 import 'package:open_file/open_file.dart';
 
-//Clase que se encarga del carrito de compra
+// Clase que se encarga del carrito de compra
 class Carrito {
   final List<Productos> _items = [];
 
@@ -22,14 +22,14 @@ class Carrito {
   void clearCart() {
     _items.clear();
   }
-  //calcular el total a pagar por los productos
-  double Total(){
+
+  // Calcular el total a pagar por los productos
+  double Total() {
     return _items.fold(0, (sum, item) => sum + item.price);
   }
-
 }
 
-//Clase de facturacion (extraer en pdf)
+// Clase de facturación (extraer en PDF)
 class Pdftransform {
   Future<String> generateInvoice(List<Productos> items) async {
     final pdf = pw.Document();
@@ -60,19 +60,22 @@ class Pdftransform {
   }
 }
 
-
-//Productos cargar desde un archivo json
+// Productos cargados desde un archivo JSON
 class Productos {
   final String name;
   final int price;
   final String description;
   final String image;
+  final bool isOnSale; // Nuevo campo: indica si el producto está en oferta
+  final bool isPopular; // Nuevo campo: indica si el producto es popular
 
   Productos({
     required this.name,
     required this.price,
     required this.description,
     required this.image,
+    this.isOnSale = false, // Valor predeterminado
+    this.isPopular = false, // Valor predeterminado
   });
 
   factory Productos.fromJson(Map<String, dynamic> json) {
@@ -81,6 +84,8 @@ class Productos {
       price: json['price'],
       description: json['description'],
       image: json['image'],
+      isOnSale: json['isOnSale'] ?? false, // Lee del JSON o usa falso
+      isPopular: json['isPopular'] ?? false, // Lee del JSON o usa falso
     );
   }
 }
@@ -89,7 +94,8 @@ class ProductService {
   final Map<String, List<Productos>> _categories = {};
 
   Future<void> loadProducts() async {
-    final String jsonString = await rootBundle.loadString('assets/datos/productos.json');
+    final String jsonString =
+    await rootBundle.loadString('assets/datos/productos.json');
     final Map<String, dynamic> jsonData = jsonDecode(jsonString);
 
     jsonData.forEach((category, products) {
@@ -103,5 +109,3 @@ class ProductService {
     return _categories;
   }
 }
-
-

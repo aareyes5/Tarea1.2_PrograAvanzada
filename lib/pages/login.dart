@@ -1,73 +1,79 @@
 import 'package:flutter/material.dart';
-import '../logica/logica_login.dart';
 
-class Login extends StatefulWidget {
-  @override
-  _LoginPageState createState() => _LoginPageState();
-}
-
-class _LoginPageState extends State<Login> {
-  final _usernameController = TextEditingController();
-  final _passwordController = TextEditingController();
-  final AutenticacionLogin _auth = AutenticacionLogin();
-  late Future<void> _cargarUsuariosFuture;
-
-  @override
-  void initState() {
-    super.initState();
-    // Inicia la carga de usuarios
-    _cargarUsuariosFuture = _auth.cargarUsuarios();
-  }
-
-  void _login() {
-    if (_auth.login(_usernameController.text, _passwordController.text)) {
-      Navigator.pushReplacementNamed(context, '/home');
-    } else {
-      ScaffoldMessenger.of(context).showSnackBar(
-        SnackBar(content: Text('Credenciales incorrectas')),
-      );
-    }
-  }
-
+class Login extends StatelessWidget {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      appBar: AppBar(title: Text('Login')),
-      body: FutureBuilder<void>(
-        future: _cargarUsuariosFuture,
-        builder: (context, snapshot) {
-          if (snapshot.connectionState == ConnectionState.waiting) {
-            // Muestra un indicador de carga mientras se cargan los usuarios
-            return Center(child: CircularProgressIndicator());
-          } else if (snapshot.hasError) {
-            // Maneja errores en la carga del archivo JSON
-            return Center(child: Text('Error al cargar usuarios'));
-          } else {
-            // Construye la interfaz de login después de cargar los usuarios
-            return Padding(
-              padding: const EdgeInsets.all(16.0),
-              child: Column(
-                mainAxisAlignment: MainAxisAlignment.center,
-                children: [
-                  TextField(
-                    controller: _usernameController,
-                    decoration: InputDecoration(labelText: 'Usuario'),
+      body: Container(
+        decoration: BoxDecoration(
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [Color(0xFFE5E5E5), Color(0xFFFFFFFF)],
+          ),
+        ),
+        child: Center(
+          child: Container(
+            width: MediaQuery.of(context).size.width * 0.8,
+            height: MediaQuery.of(context).size.height * 0.5,
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
+            ),
+            padding: EdgeInsets.all(20),
+            child: Column(
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                Text(
+                  'Inicio de Sesión',
+                  style: TextStyle(
+                    fontSize: 24,
+                    fontWeight: FontWeight.bold,
+                    color: Colors.black,
                   ),
-                  TextField(
-                    controller: _passwordController,
-                    decoration: InputDecoration(labelText: 'Contraseña'),
-                    obscureText: true,
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  decoration: InputDecoration(
+                    labelText: 'Usuario',
+                    border: OutlineInputBorder(),
                   ),
-                  SizedBox(height: 20),
-                  ElevatedButton(
-                    onPressed: _login,
-                    child: Text('Iniciar sesión'),
+                ),
+                SizedBox(height: 20),
+                TextField(
+                  obscureText: true,
+                  decoration: InputDecoration(
+                    labelText: 'Contraseña',
+                    border: OutlineInputBorder(),
                   ),
-                ],
-              ),
-            );
-          }
-        },
+                ),
+                SizedBox(height: 20),
+                ElevatedButton.icon(
+                  onPressed: () {
+                    Navigator.pushNamed(context, '/home');
+                  },
+                  icon: Icon(Icons.login),
+                  label: Text('Iniciar Sesión'),
+                  style: ElevatedButton.styleFrom(
+                    backgroundColor: Color(0xFFE63946),
+                    foregroundColor: Colors.white,
+                    shape: RoundedRectangleBorder(
+                      borderRadius: BorderRadius.circular(10),
+                    ),
+                  ),
+                ),
+              ],
+            ),
+          ),
+        ),
       ),
     );
   }

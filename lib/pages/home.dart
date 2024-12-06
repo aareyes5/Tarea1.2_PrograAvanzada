@@ -10,6 +10,10 @@ class _HomePageState extends State<Home> {
   final ProductService _productService = ProductService();
   final Carrito _carrito = Carrito();
 
+  bool checkboxValue = false;
+  String? selectedOption;
+  final List<String> options = ['Productos Populares', 'Menores a \$50'];
+
   @override
   void initState() {
     super.initState();
@@ -21,45 +25,88 @@ class _HomePageState extends State<Home> {
   }
 
   void _logout() {
-    // Redirigir al login
     Navigator.pushNamedAndRemoveUntil(context, '/', (route) => false);
   }
 
   @override
   Widget build(BuildContext context) {
-    return WillPopScope(
-      onWillPop: () async {
-        // Bloquear el botón de retroceso
-        return false;
-      },
-      child: Scaffold(
-        appBar: AppBar(
-          title: Text('Tienda de Zapatos'),
-          actions: [
-            IconButton(
-              icon: Icon(Icons.shopping_cart),
-              onPressed: _irAFactura,
+    return Scaffold(
+      appBar: AppBar(
+        title: Text('Tienda de Zapatos'),
+        actions: [
+          IconButton(
+            icon: Icon(Icons.shopping_cart),
+            onPressed: _irAFactura,
+          ),
+          IconButton(
+            icon: Icon(Icons.logout),
+            onPressed: _logout,
+          ),
+        ],
+      ),
+      body: Column(
+        children: [
+          Container(
+            padding: EdgeInsets.all(10),
+            margin: EdgeInsets.symmetric(vertical: 10, horizontal: 20),
+            decoration: BoxDecoration(
+              color: Colors.white,
+              borderRadius: BorderRadius.circular(12),
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.grey.withOpacity(0.3),
+                  blurRadius: 10,
+                  spreadRadius: 5,
+                  offset: Offset(0, 3),
+                ),
+              ],
             ),
-            IconButton(
-              icon: Icon(Icons.logout),
-              onPressed: _logout,
+            child: Column(
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Row(
+                  children: [
+                    Checkbox(
+                      value: checkboxValue,
+                      onChanged: (value) {
+                        setState(() {
+                          checkboxValue = value!;
+                        });
+                      },
+                    ),
+                    Text(
+                      'Mostrar solo productos en oferta',
+                      style: TextStyle(fontSize: 16),
+                    ),
+                  ],
+                ),
+                Text(
+                  'Selecciona un filtro:',
+                  style: TextStyle(fontSize: 16, fontWeight: FontWeight.bold),
+                ),
+                ...options.map((option) {
+                  return RadioListTile<String>(
+                    title: Text(option),
+                    value: option,
+                    groupValue: selectedOption,
+                    onChanged: (value) {
+                      setState(() {
+                        selectedOption = value;
+                      });
+                    },
+                  );
+                }).toList(),
+              ],
             ),
-          ],
-        ),
-        body: FutureBuilder(
-          future: _productService.loadProducts(),
-          builder: (context, snapshot) {
-            if (snapshot.connectionState == ConnectionState.waiting) {
-              return Center(child: CircularProgressIndicator());
-            }
-
-            final categories = _productService.getCategories();
-
-            return ListView.builder(
-              itemCount: categories.keys.length,
+          ),
+          Expanded(
+            child: ListView.builder(
+              itemCount: _productService.getCategories().keys.length,
               itemBuilder: (context, index) {
-                final category = categories.keys.elementAt(index);
-                final products = categories[category] ?? [];
+                final category =
+                _productService.getCategories().keys.elementAt(index);
+                final products =
+                    _productService.getCategories()[category] ?? [];
 
                 return ExpansionTile(
                   title: Text(
@@ -67,6 +114,10 @@ class _HomePageState extends State<Home> {
                     style: TextStyle(fontSize: 20, fontWeight: FontWeight.bold),
                   ),
                   children: products.map((product) {
+                    if (checkboxValue && !product.isOnSale) return Container();
+                    if (selectedOption == 'Productos Populares' && !product.isPopular) return Container();
+                    if (selectedOption == 'Menores a \$50' && product.price > 50) return Container();
+
                     return Card(
                       margin: EdgeInsets.symmetric(vertical: 5, horizontal: 10),
                       elevation: 3,
@@ -88,7 +139,9 @@ class _HomePageState extends State<Home> {
                             SizedBox(height: 5),
                             Text(
                               '\$${product.price}',
-                              style: TextStyle(color: Colors.green, fontWeight: FontWeight.bold),
+                              style: TextStyle(
+                                  color: Colors.green,
+                                  fontWeight: FontWeight.bold),
                             ),
                           ],
                         ),
@@ -97,21 +150,29 @@ class _HomePageState extends State<Home> {
                             _carrito.addToCart(product);
                             ScaffoldMessenger.of(context).showSnackBar(
                               SnackBar(
-                                content: Text('${product.name} agregado al carrito'),
+                                content: Text(
+                                    '${product.name} agregado al carrito'),
                                 duration: Duration(seconds: 2),
                               ),
                             );
                           },
                           child: Text('Agregar'),
+                          style: ElevatedButton.styleFrom(
+                            backgroundColor: Color(0xFFE63946),
+                            foregroundColor: Colors.white,
+                            shape: RoundedRectangleBorder(
+                              borderRadius: BorderRadius.circular(10),
+                            ),
+                          ),
                         ),
                       ),
                     );
                   }).toList(),
                 );
               },
-            );
-          },
-        ),
+            ),
+          ),
+        ],
       ),
     );
   }
