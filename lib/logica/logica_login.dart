@@ -23,42 +23,43 @@ class Usuario {
 }
 
 class AutenticacionLogin {
-  List<Usuario> _usuarios = [];
-  Usuario? _currentUser;
+  // Made public for testing
+  List<Usuario> usuarios = [];
+  Usuario? currentUser;
 
   Future<void> cargarUsuarios() async {
     final String jsonString =
         await rootBundle.loadString('assets/datos/usuarios.json');
     final List<dynamic> jsonData = jsonDecode(jsonString);
 
-    _usuarios = jsonData.map((json) => Usuario.fromJson(json)).toList();
+    usuarios = jsonData.map((json) => Usuario.fromJson(json)).toList();
   }
 
   bool login(String username, String password) {
     try {
-      _currentUser = _usuarios.firstWhere(
+      currentUser = usuarios.firstWhere(
         (user) => user.username == username && user.password == password,
       );
       return true;
     } catch (e) {
-      _currentUser = null;
+      currentUser = null;
       return false;
     }
   }
 
   bool requiresTOTP() {
-    return _currentUser?.totpSecret != null;
+    return currentUser?.totpSecret != null;
   }
 
   bool verifyTOTP(String code) {
-    if (_currentUser?.totpSecret == null) {
+    if (currentUser?.totpSecret == null) {
       return true; // No TOTP required
     }
 
     try {
       final now = DateTime.now().millisecondsSinceEpoch;
       final generatedCode = OTP.generateTOTPCodeString(
-        _currentUser!.totpSecret!,
+        currentUser!.totpSecret!,
         now,
         length: 6,
         interval: 30,
@@ -71,6 +72,4 @@ class AutenticacionLogin {
       return false;
     }
   }
-
-  Usuario? get currentUser => _currentUser;
 }
