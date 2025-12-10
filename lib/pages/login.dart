@@ -17,7 +17,17 @@ class _LoginState extends State<Login> {
   @override
   void initState() {
     super.initState();
-    _auth.cargarUsuarios();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    try {
+      await _auth.cargarUsuarios();
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error al cargar usuarios. Intente de nuevo.';
+      });
+    }
   }
 
   void _login() {
@@ -160,10 +170,12 @@ class _LoginState extends State<Login> {
                       setState(() {
                         _showTOTP = false;
                         _totpController.clear();
+                        _usernameController.clear();
+                        _passwordController.clear();
                         _errorMessage = '';
                       });
                     },
-                    child: Text('Volver'),
+                    child: Text('Cancelar'),
                   ),
                 ],
                 if (_errorMessage.isNotEmpty)

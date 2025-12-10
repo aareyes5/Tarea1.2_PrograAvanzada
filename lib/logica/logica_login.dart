@@ -28,11 +28,17 @@ class AutenticacionLogin {
   Usuario? currentUser;
 
   Future<void> cargarUsuarios() async {
-    final String jsonString =
-        await rootBundle.loadString('assets/datos/usuarios.json');
-    final List<dynamic> jsonData = jsonDecode(jsonString);
+    try {
+      final String jsonString =
+          await rootBundle.loadString('assets/datos/usuarios.json');
+      final List<dynamic> jsonData = jsonDecode(jsonString);
 
-    usuarios = jsonData.map((json) => Usuario.fromJson(json)).toList();
+      usuarios = jsonData.map((json) => Usuario.fromJson(json)).toList();
+    } catch (e) {
+      // If loading fails, initialize with empty list
+      usuarios = [];
+      rethrow; // Re-throw to allow UI to handle the error
+    }
   }
 
   bool login(String username, String password) {
