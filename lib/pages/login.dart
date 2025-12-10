@@ -10,12 +10,24 @@ class _LoginState extends State<Login> {
   final AutenticacionLogin _auth = AutenticacionLogin();
   final TextEditingController _usernameController = TextEditingController();
   final TextEditingController _passwordController = TextEditingController();
+  final TextEditingController _totpController = TextEditingController();
   String _errorMessage = '';
+  bool _showTOTP = false;
 
   @override
   void initState() {
     super.initState();
-    _auth.cargarUsuarios();
+    _loadUsers();
+  }
+
+  Future<void> _loadUsers() async {
+    try {
+      await _auth.cargarUsuarios();
+    } catch (e) {
+      setState(() {
+        _errorMessage = 'Error al cargar usuarios. Intente de nuevo.';
+      });
+    }
   }
 
   void _login() {
@@ -23,10 +35,30 @@ class _LoginState extends State<Login> {
     final password = _passwordController.text;
 
     if (_auth.login(username, password)) {
-      Navigator.pushNamed(context, '/home');
+      if (_auth.requiresTOTP()) {
+        setState(() {
+          _showTOTP = true;
+          _errorMessage = '';
+        });
+      } else {
+        Navigator.pushNamed(context, '/home');
+      }
     } else {
       setState(() {
         _errorMessage = 'Usuario o contraseña incorrectos';
+        _showTOTP = false;
+      });
+    }
+  }
+
+  void _verifyTOTP() {
+    final totpCode = _totpController.text;
+
+    if (_auth.verifyTOTP(totpCode)) {
+      Navigator.pushNamed(context, '/home');
+    } else {
+      setState(() {
+        _errorMessage = 'Código TOTP incorrecto';
       });
     }
   }
@@ -63,7 +95,7 @@ class _LoginState extends State<Login> {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 Text(
-                  'Inicio de Sesión',
+                  _showTOTP ? 'Autenticación 2FA' : 'Inicio de Sesión',
                   style: TextStyle(
                     fontSize: 24,
                     fontWeight: FontWeight.bold,
@@ -71,35 +103,81 @@ class _LoginState extends State<Login> {
                   ),
                 ),
                 SizedBox(height: 20),
-                TextField(
-                  controller: _usernameController,
-                  decoration: InputDecoration(
-                    labelText: 'Usuario',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
-                TextField(
-                  controller: _passwordController,
-                  obscureText: true,
-                  decoration: InputDecoration(
-                    labelText: 'Contraseña',
-                    border: OutlineInputBorder(),
-                  ),
-                ),
-                SizedBox(height: 20),
-                ElevatedButton.icon(
-                  onPressed: _login,
-                  icon: Icon(Icons.login),
-                  label: Text('Iniciar Sesión'),
-                  style: ElevatedButton.styleFrom(
-                    backgroundColor: Color(0xFFE63946),
-                    foregroundColor: Colors.white,
-                    shape: RoundedRectangleBorder(
-                      borderRadius: BorderRadius.circular(10),
+                if (!_showTOTP) ...[
+                  TextField(
+                    controller: _usernameController,
+                    decoration: InputDecoration(
+                      labelText: 'Usuario',
+                      border: OutlineInputBorder(),
                     ),
                   ),
-                ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _passwordController,
+                    obscureText: true,
+                    decoration: InputDecoration(
+                      labelText: 'Contraseña',
+                      border: OutlineInputBorder(),
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: _login,
+                    icon: Icon(Icons.login),
+                    label: Text('Iniciar Sesión'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFE63946),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                ],
+                if (_showTOTP) ...[
+                  Text(
+                    'Ingrese el código de autenticación de 6 dígitos',
+                    style: TextStyle(fontSize: 14, color: Colors.grey[700]),
+                    textAlign: TextAlign.center,
+                  ),
+                  SizedBox(height: 20),
+                  TextField(
+                    controller: _totpController,
+                    keyboardType: TextInputType.number,
+                    maxLength: 6,
+                    decoration: InputDecoration(
+                      labelText: 'Código TOTP',
+                      border: OutlineInputBorder(),
+                      counterText: '',
+                    ),
+                  ),
+                  SizedBox(height: 20),
+                  ElevatedButton.icon(
+                    onPressed: _verifyTOTP,
+                    icon: Icon(Icons.verified_user),
+                    label: Text('Verificar'),
+                    style: ElevatedButton.styleFrom(
+                      backgroundColor: Color(0xFFE63946),
+                      foregroundColor: Colors.white,
+                      shape: RoundedRectangleBorder(
+                        borderRadius: BorderRadius.circular(10),
+                      ),
+                    ),
+                  ),
+                  SizedBox(height: 10),
+                  TextButton(
+                    onPressed: () {
+                      setState(() {
+                        _showTOTP = false;
+                        _totpController.clear();
+                        _usernameController.clear();
+                        _passwordController.clear();
+                        _errorMessage = '';
+                      });
+                    },
+                    child: Text('Cancelar'),
+                  ),
+                ],
                 if (_errorMessage.isNotEmpty)
                   Padding(
                     padding: const EdgeInsets.only(top: 20),

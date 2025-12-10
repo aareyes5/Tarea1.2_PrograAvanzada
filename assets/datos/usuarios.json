@@ -10,5 +10,10 @@
   {
     "username": "user2",
     "password": "pass456"
+  },
+  {
+    "username": "kings952",
+    "password": "github123",
+    "totpSecret": "NCQCGW276RXWI5AN"
   }
 ]
